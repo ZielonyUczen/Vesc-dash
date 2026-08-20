@@ -91,7 +91,7 @@ function DashboardScreen() {
           unit="kW"
         />
         <MetricCard
-          className="span-2"
+          className="span-2 row-end"
           icon={<BatteryPowerIcon />}
           label="PRĄD BATERII"
           value="72.4"
@@ -105,7 +105,7 @@ function DashboardScreen() {
           unit="A"
         />
         <MetricCard
-          className="span-3"
+          className="span-3 row-end"
           icon={<DutyIcon />}
           label="DUTY"
           value="78.5"
@@ -126,7 +126,7 @@ function DashboardScreen() {
           unit="°C"
         />
         <MetricCard
-          className="span-2"
+          className="span-2 row-end"
           icon={<RegenIcon />}
           label="REGEN"
           value="ON"

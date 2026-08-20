@@ -291,9 +291,7 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
 }
 
-.metric-card:nth-child(3),
-.metric-card:nth-child(5),
-.metric-card:nth-child(8) {
+.metric-card.row-end {
   border-right: none;
 }
 
@@ -497,8 +495,8 @@
     overflow-x: auto;
   }
 
-  th,
-  td {
+  .stats-table-card th,
+  .stats-table-card td {
     min-width: 124px;
   }
 }
