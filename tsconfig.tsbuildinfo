@@ -1,1 +1,0 @@
-{"root":["./src/main.tsx","./src/vite-env.d.ts","./src/__tests__/speed.test.ts","./src/components/ConnectionBadge.tsx","./src/components/Dashboard.tsx","./src/components/Gauge.tsx","./src/components/SettingsPanel.tsx","./src/components/StatCard.tsx","./src/hooks/useVesc.ts","./src/lib/client.ts","./src/lib/speed.ts","./src/lib/vesc.ts"],"version":"5.9.3"}

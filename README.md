@@ -1,6 +1,7 @@
 # VESC Dash
 
-Pulpit nawigacyjny w czasie rzeczywistym dla zestawu **Marketbase 75200 V2 + BBS02B** (firmware 7.x).
+Pulpit nawigacyjny w czasie rzeczywistym dla zestawu **Marketbase 75200 V2 + BBS02B** (firmware 7.x).  
+Aplikacja zbudowana na **Qt 6 / QML** z biblioteką **libsimplebm** do komunikacji BLE z VESC.
 
 ## Specyfikacja sprzętu
 
@@ -18,93 +19,71 @@ Pulpit nawigacyjny w czasie rzeczywistym dla zestawu **Marketbase 75200 V2 + BBS
 
 - Prędkość wyliczana z eRPM z uwzględnieniem pełnego łańcucha napędowego
 - Wskazania w czasie rzeczywistym: napięcie, prąd silnika, prąd baterii, moc, duty cycle, temperatury
-- Kolorowe wskaźniki okrągłe (gauge) + karty statystyk
-- Konfigurowalny panel przekładni i konfiguracji WebSocket
-- Ostrzeżenia przy przekroczeniu temperatury MOSFET/silnika
-- Wyświetlanie kodów błędów VESC
+- Kolorowe wskaźniki kołowe (QML `Shape`) + karty statystyk
+- Panel ustawień: dobór aktywnej zębatki kasety, obwód koła, przełożenia
+- Wyszukiwanie urządzeń BLE i połączenie z VESC przez Nordic UART Service (NUS)
+- Ostrzeżenia przy przekroczeniu temperatury MOSFET > 70 °C / silnika > 80 °C
+- Wyświetlanie kodów błędów VESC z opisem po polsku
 
 ## Architektura projektu
 
 ```
-src/
-├── lib/
-│   ├── speed.ts      # Przelicznik eRPM → km/h (BBS02B)
-│   ├── vesc.ts       # Typy telemetrii VESC, kody błędów
-│   └── client.ts     # Klient WebSocket (auto-reconnect)
-├── hooks/
-│   └── useVesc.ts    # React hook zarządzający połączeniem
-├── components/
-│   ├── Dashboard.tsx     # Główny layout
-│   ├── Gauge.tsx         # Wskaźnik kołowy SVG
-│   ├── StatCard.tsx      # Karta z pojedynczą wartością
-│   ├── ConnectionBadge.tsx
-│   └── SettingsPanel.tsx # Panel konfiguracji
-└── __tests__/
-    └── speed.test.ts     # Testy jednostkowe przelicznika prędkości
+VescDash/
+├── main.cpp                      # Punkt wejścia Qt
+├── CMakeLists.txt                # Budowanie Qt6 + libsimplebm
+├── src/
+│   ├── VescController.h/.cpp     # Logika obliczania prędkości, dane telemetryczne
+│   └── VescBleClient.h/.cpp      # Komunikacja BLE przez libsimplebm / NUS
+├── qml/
+│   ├── Main.qml                  # Główny widok (StackLayout)
+│   ├── Gauge.qml                 # Wskaźnik kołowy (Qt Shapes)
+│   ├── StatCard.qml              # Karta z wartością
+│   └── SettingsPage.qml          # Ustawienia BLE i przekładni
+├── tests/
+│   └── TestVescController.cpp    # Testy Qt Test (obliczenia prędkości, telemetria)
+└── third_party/libsimplebm/      # Submoduł git (VESC BLE library)
 ```
 
 ## Obliczanie prędkości
 
 ```
-eRPM  ──÷ polePairs──▶ mech. RPM
-                           │
-                     ÷ motorGearRatio (21.9)
-                           │
-                     × (frontTeeth / rearTeeth)
-                           │
-                     × wheelCircumference × 60 / 1000
-                           │
-                         km/h
+eRPM  ──÷ polePairs (8)──▶ mech. RPM
+                               │
+                         ÷ motorGearRatio (21.9)
+                               │
+                         × (frontTeeth / rearTeeth)
+                               │
+                         × wheelCircumference × 60 / 1000
+                               │
+                             km/h
 ```
 
-## Uruchomienie
+## Wymagania
 
-### Wymagania
+- Qt 6.5+ (Quick, Bluetooth, Shapes)
+- CMake 3.21+
+- [libsimplebm](https://github.com/vedderb/vesc_express) (VESC BLE library) — dodaj jako submoduł
 
-- Node.js ≥ 18
-- Serwer WebSocket przekazujący dane RT z VESC (np. skrypt serial-to-ws lub VESC Express)
-
-### Instalacja i uruchomienie
+## Budowanie
 
 ```bash
-npm install
-npm run dev
+git submodule update --init --recursive
+
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+
+# Testy
+cd build && ctest --output-on-failure
 ```
 
-Otwórz `http://localhost:5173`. W panelu ⚙ Ustawienia wpisz adres WebSocket swojego mostka VESC.
+## Protokół BLE (Nordic UART Service)
 
-### Format wiadomości WebSocket
+VESC NUS UUIDs:
+- **Service**: `6e400001-b5a3-f393-e0a9-e50e24dcca9e`
+- **TX** (notify, VESC→app): `6e400003-b5a3-f393-e0a9-e50e24dcca9e`
+- **RX** (write, app→VESC): `6e400002-b5a3-f393-e0a9-e50e24dcca9e`
 
-Most powinien wysyłać dane w formacie JSON:
-
-```json
-{
-  "type": "rt_data",
-  "payload": {
-    "voltageInput": 42.5,
-    "currentMotor": 15.2,
-    "currentInput": 8.1,
-    "dutyCycle": 45,
-    "erpm": 22000,
-    "ampHours": 1.23,
-    "wattHours": 52.1,
-    "tempMosfet": 38.5,
-    "tempMotor": 41.0,
-    "faultCode": 0
-  }
-}
+Pakiet żądania RT data (`COMM_GET_VALUES = 0x04`):
 ```
-
-### Budowanie produkcyjne
-
-```bash
-npm run build
-```
-
-Wynik trafia do katalogu `dist/`.
-
-### Testy
-
-```bash
-npm test
+02 01 04 <crc_hi> <crc_lo> 03
 ```
