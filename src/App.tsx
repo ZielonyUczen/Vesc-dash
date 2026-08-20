@@ -112,21 +112,21 @@ function DashboardScreen() {
           unit="%"
         />
         <MetricCard
-          className="span-2"
+          className="span-2 last-row"
           icon={<ThermometerIcon />}
           label="TEMP. MOSFET"
           value="54"
           unit="°C"
         />
         <MetricCard
-          className="span-2"
+          className="span-2 last-row"
           icon={<ShieldIcon />}
           label="TEMP. SILNIKA"
           value="62"
           unit="°C"
         />
         <MetricCard
-          className="span-2 row-end"
+          className="span-2 row-end last-row"
           icon={<RegenIcon />}
           label="REGEN"
           value="ON"

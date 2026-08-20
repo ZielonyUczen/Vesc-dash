@@ -295,7 +295,7 @@
   border-right: none;
 }
 
-.metric-card:nth-last-child(-n + 3) {
+.metric-card.last-row {
   border-bottom: none;
 }
 
