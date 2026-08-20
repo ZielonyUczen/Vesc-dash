@@ -120,7 +120,7 @@ function DashboardScreen() {
         />
         <MetricCard
           className="span-2 last-row"
-          icon={<ShieldIcon />}
+          icon={<MotorTempIcon />}
           label="TEMP. SILNIKA"
           value="62"
           unit="°C"
@@ -240,7 +240,11 @@ function MetricCard({ className = '', icon, label, unit, value }: MetricCardProp
 
 function NavItem({ active = false, icon, label }: NavItemProps) {
   return (
-    <button type="button" className={`nav-item ${active ? 'active' : ''}`.trim()}>
+    <button
+      type="button"
+      className={`nav-item ${active ? 'active' : ''}`.trim()}
+      aria-pressed={active}
+    >
       <span className="nav-icon" aria-hidden="true">
         {icon}
       </span>
@@ -323,11 +327,12 @@ function ThermometerIcon() {
   )
 }
 
-function ShieldIcon() {
+function MotorTempIcon() {
   return (
     <IconFrame>
       <path d="M16 4 7 8v7c0 6 3.8 10.3 9 13 5.2-2.7 9-7 9-13V8l-9-4Z" />
-      <path d="m12 18 3 3 5-7" />
+      <path d="M16 11v8" />
+      <path d="M16 22.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
     </IconFrame>
   )
 }
