@@ -366,38 +366,38 @@
   background: rgba(0, 0, 0, 0.18);
 }
 
-table {
+.stats-table-card table {
   width: 100%;
   border-collapse: collapse;
 }
 
-thead {
+.stats-table-card thead {
   color: #9cff39;
 }
 
-th,
-td {
+.stats-table-card th,
+.stats-table-card td {
   padding: 15px 12px;
   border-right: 1px solid rgba(255, 255, 255, 0.12);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   text-align: center;
 }
 
-th:last-child,
-td:last-child {
+.stats-table-card th:last-child,
+.stats-table-card td:last-child {
   border-right: none;
 }
 
-tbody tr:last-child td {
+.stats-table-card tbody tr:last-child td {
   border-bottom: none;
 }
 
-th {
+.stats-table-card th {
   font-size: 1.35rem;
   font-weight: 600;
 }
 
-td {
+.stats-table-card td {
   font-size: 1.9rem;
   color: #f4f4f5;
 }
