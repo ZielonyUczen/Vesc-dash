@@ -60,7 +60,7 @@ function DashboardScreen() {
       <section className="gear-controls" aria-label="Gear controls">
         <button type="button" className="gear-button" aria-label="Decrease gear">
           <span className="gear-symbol">–</span>
-          <span>BIEG</span>
+          <span aria-hidden="true">BIEG</span>
         </button>
 
         <div className="gear-indicator" aria-label="Current gear">
@@ -71,7 +71,7 @@ function DashboardScreen() {
 
         <button type="button" className="gear-button" aria-label="Increase gear">
           <span className="gear-symbol">+</span>
-          <span>BIEG</span>
+          <span aria-hidden="true">BIEG</span>
         </button>
       </section>
 
@@ -224,8 +224,10 @@ function SpeedGauge({ max, value }: { max: number; value: number }) {
 }
 
 function MetricCard({ className = '', icon, label, unit, value }: MetricCardProps) {
+  const cardClassName = ['metric-card', className].filter(Boolean).join(' ')
+
   return (
-    <section className={`metric-card ${className}`.trim()}>
+    <section className={cardClassName}>
       <div className="metric-icon" aria-hidden="true">
         {icon}
       </div>
@@ -255,7 +257,15 @@ function NavItem({ active = false, icon, label }: NavItemProps) {
 
 function IconFrame({ children }: { children: ReactNode }) {
   return (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       {children}
     </svg>
   )
